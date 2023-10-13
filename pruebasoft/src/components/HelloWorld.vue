@@ -4,7 +4,7 @@
     <div class="mb-3">
         <label for="paises" class="form-label">PAISES</label>
         <div class="input-group">
-          <select v-model="paisSeleccionado" class="form-select" id="paises">
+          <select v-model="paisSeleccionado" class="form-select" id="paises" @change="cargarEstado">
             <option value="" hidden>Seleccione un pais</option>
             <option v-for="pais in paises" :key="pais.id" :value="pais.id">{{pais.name}}</option>
           </select>
@@ -16,7 +16,7 @@
   <div class="mb-3">
         <label for="estado" class="form-label">ESTADO</label>
         <div class="input-group">
-          <select v-model="estadoSeleccionado" class="form-select" id="ciudades">
+          <select v-model="estadoSeleccionado" class="form-select" id="ciudades" @change="cargarCiudad">
             <option value="" hidden>Seleccione un estado</option>
             <option v-for="estado in estados" :key="estado.id" :value="estado.id">{{estado.name}}</option>
           </select>
@@ -46,6 +46,7 @@ export default {
       estados: [],
       ciudades: [],
       paisSeleccionado: '',
+      estadoSeleccionado: '',
     }
   },
   mounted() {
@@ -63,16 +64,32 @@ export default {
         })
     },
     cargarEstado() {
-      console.log("ola"+this.paisSeleccionado)
-      axios
-        .get('http://localhost:3000/api/v1/state')
-        .then((response) => {
-          this.estados = response.data
-        })
-        .catch((error) => {
-          console.log(error)
-        })
+      console.log(this.paisSeleccionado)
+      if (this.paisSeleccionado) {
+        axios
+          .get(`http://localhost:3000/api/v1/state/country/${this.paisSeleccionado}`)
+          .then((response) => {
+            this.estados = response.data;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
     },
+    cargarCiudad() {
+      console.log(this.estadoSeleccionado)
+      if (this.estadoSeleccionado) {
+        axios
+          .get(`http://localhost:3000/api/v1/city/state/${this.estadoSeleccionado}`)
+          .then((response) => {
+            this.ciudades = response.data;
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    },
+
   },
 }
 </script>
